@@ -2,7 +2,7 @@
     package="com.cuownbe.setes_ctaker">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="setes_ctaker"
+        android:label="Iam CareTaker"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

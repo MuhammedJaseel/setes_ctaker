@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -23,15 +24,38 @@ class _MatchScreenState extends State<MatchScreen> {
   String? error;
   seterror(v) => setState(() => error = v);
 
+  String status = "";
+  setstatus(v) => setState(() => status = v);
+  String goals = ". - .";
+  setgoals(v) => setState(() => goals = v);
+  String matchtimer = "";
+  setmatchtimer(v) => setState(() => matchtimer = v);
+
+  Timer? _timer;
+  set_timer(v) => _timer = v;
+
   @override
   void initState() {
-    getMatch(this);
+    matchInitialLoad(this);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     Size scr = getScreen(context);
+    if (!loading) {
+      if (status == "Started" || status == "Fulltime") {
+        setgoals(match["goals"]["r"].toString() +
+            " - " +
+            match["goals"]["b"].toString());
+      }
+    }
     return Scaffold(
       appBar: AppBar(title: Text(widget.props["slot"]["truf_name"])),
       body: loading
@@ -51,7 +75,7 @@ class _MatchScreenState extends State<MatchScreen> {
                           ),
                           child: MatchBody(this),
                         ),
-                        () => reloadMatch(this),
+                        () => getMatch(this),
                         () {},
                       ),
                     ),
@@ -145,6 +169,27 @@ class MatchBody extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   color: Colors.black45,
                   fontSize: 13),
+            ),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Goals(Red - Blue) : " + props.goals,
+              style: const TextStyle(
+                color: Colors.black87,
+                fontWeight: FontWeight.w500,
+                fontSize: 15,
+              ),
+            ),
+            Text(
+              props.matchtimer,
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 15,
+              ),
             ),
           ],
         ),
@@ -307,7 +352,6 @@ class _MatchBottomState extends State<MatchBottom> {
 
   @override
   Widget build(BuildContext context) {
-    Size scr = getScreen(context);
     String status = widget.props.match['status'];
     return Container(
       margin: const EdgeInsets.all(5),

@@ -1,3 +1,6 @@
-getApi(s) => Uri.parse('https://apisetes.herokuapp.com/ctaker/' + s);
+// const base = "https://setesapi.herokuapp.com/";
+const base = "https://apisetes.herokuapp.com/";
 
-getImgProfile(s) => Uri.parse('https://apisetes.herokuapp.com/asset/ctaker/' + s);
+getApi(s) => Uri.parse(base + 'ctaker/' + s);
+
+getImgProfile(s) => Uri.parse(base + 'asset/ctaker/' + s);
