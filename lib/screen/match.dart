@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:setes_ctaker/method/match.dart';
 import 'package:setes_ctaker/module/simple.dart';
@@ -107,21 +105,26 @@ class MatchBody extends StatelessWidget {
   const MatchBody(this.props, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    Size scr = getScreen(context);
+    var slot = props.widget.props["slot"];
     return Column(
       children: [
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              props.widget.props["slot"]["truf_name"],
-              style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                  fontSize: 16),
+            SizedBox(
+              width: scr.width * .7,
+              child: Text(
+                slot["truf_name"],
+                style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                    fontSize: 16),
+              ),
             ),
             Text(
-              props.widget.props["slot"]["price"] + "/-",
+              (slot["price"] / 100).toString() + "/-",
               style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
@@ -133,17 +136,14 @@ class MatchBody extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Ground: " + props.widget.props["slot"]["ground"],
+              "Ground: " + slot["ground"],
               style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   color: Colors.black45,
                   fontSize: 13),
             ),
             Text(
-              "Time : " +
-                  props.widget.props["slot"]["s_time"] +
-                  " - " +
-                  props.widget.props["slot"]["e_time"],
+              "Time : " + slot["s_time"] + " - " + slot["e_time"],
               style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   color: Colors.black45,
@@ -154,14 +154,19 @@ class MatchBody extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              props.match["truf"] == null
-                  ? ""
-                  : props.match["truf"]["location"] ?? "",
-              style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black45,
-                  fontSize: 13),
+            SizedBox(
+              width: scr.width * .7,
+              child: Text(
+                props.match["truf"] == null
+                    ? ""
+                    : props.match["truf"]["location"] ?? "",
+                maxLines: 2,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black45,
+                    overflow: TextOverflow.ellipsis,
+                    fontSize: 13),
+              ),
             ),
             Text(
               props.widget.props["date"],
@@ -377,9 +382,7 @@ class _MatchBottomState extends State<MatchBottom> {
               if (status == "Booked")
                 BottomButton(
                   loading ? "..." : "Cancel",
-                  () {
-                    cancelMatch(this);
-                  },
+                  () => cancelMatch(this),
                 ),
             ],
           ),

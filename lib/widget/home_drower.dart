@@ -86,8 +86,10 @@ class HomeDrower extends StatelessWidget {
               SizedBox(
                 width: scr.width * .7 - 45,
                 child: ListTile(
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MatchsScreen())),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const MatchsScreen())),
                   title: const Text("My Matchs"),
                   subtitle: const Text("Match History"),
                 ),

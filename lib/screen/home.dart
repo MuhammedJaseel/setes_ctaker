@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:setes_ctaker/method/home.dart';
 import 'package:setes_ctaker/module/simple.dart';
@@ -10,20 +8,18 @@ import 'package:setes_ctaker/widget/match_started.dart';
 import 'package:setes_ctaker/widget/pull_reload.dart';
 
 class HomeScreen extends StatefulWidget {
+
   final Map uData;
   const HomeScreen(this.uData, {Key? key}) : super(key: key);
-
   @override
   _HomeScreenState createState() => _HomeScreenState();
+
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   List matchs = [];
-  setmatchs(v) => setState(() => matchs = v);
   bool loading = true;
-  setloading(v) => setState(() => loading = v);
   String? error;
-  seterror(v) => setState(() => error = v);
 
   @override
   void initState() {
@@ -45,10 +41,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: scr.height,
                   child: PullReloadPage(
                     Container(
-                      constraints: BoxConstraints(minHeight: scr.height - 80),
+                      constraints: BoxConstraints(minHeight: scr.height - 60),
                       child: HomeBody(this),
                     ),
-                    () => rloadMatchs(this),
+                    () => getMatchs(this),
                     () {},
                   ),
                 )
@@ -103,8 +99,10 @@ class HomeBody extends StatelessWidget {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          MatchScreen(props, props.matchs[i]["data"][j]),
+                      builder: (context) => MatchScreen(
+                        props,
+                        props.matchs[i]["data"][j],
+                      ),
                     ),
                   ),
                   child: Container(

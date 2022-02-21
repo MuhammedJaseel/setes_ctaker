@@ -17,8 +17,6 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image.asset("asset/aqai_logo.png", width: scr.width * .4),
-            // SizedBox(height: scr.height * .03),
             const Text(
               'Setes Caretaker',
               textAlign: TextAlign.left,
@@ -68,7 +66,6 @@ class LoginScreen extends StatelessWidget {
               decoration: const InputDecoration(
                 hintText: 'Password',
                 prefixIcon: Icon(Icons.password, color: Colors.black54),
-                // suffixIcon: sufficIcon,
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                 hintStyle: TextStyle(

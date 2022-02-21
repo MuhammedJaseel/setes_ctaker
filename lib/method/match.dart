@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:setes_ctaker/module/api.dart';
+import 'package:setes_ctaker/screen/positioning.dart';
 
 import 'package:setes_ctaker/widget/match_event_adder.dart';
 
@@ -26,7 +27,7 @@ getMatch(props) async {
 matchInitialLoad(props) async {
   await getMatch(props);
   props.setstatus(props.match["status"]);
-  
+
   if (props.status == "Started") {
     var start = props.match["starting_time"];
     var tes = DateTime.parse(start);
@@ -34,10 +35,8 @@ matchInitialLoad(props) async {
     var hd = d.inHours;
     var md = d.inMinutes % 60;
     var sd = d.inSeconds % 60;
-    print("object");
 
     if (hd < 3) {
-      print("object");
       props.set_timer(Timer.periodic(const Duration(seconds: 1), (timer) {
         sd++;
         if (sd == 61) {
@@ -69,7 +68,8 @@ cancelMatch(props) {
     builder: (BuildContext context) {
       return AlertDialog(
         title: const Text(
-            'If you cancel the match, then you cannot take it back.'),
+          'If you cancel the match, then you cannot take it back.',
+        ),
         actions: [
           TextButton(
             onPressed: () async {
@@ -121,20 +121,28 @@ startMatch(props) {
                   return;
                 }
               }
-              String _id = props.widget.props.match["_id"];
-              try {
-                var body = {"status": "Started", "teams": authers};
-                var res = await http.put(getApi('booking?booking_id=' + _id),
-                    body: jsonEncode(body),
-                    headers: {"Content-Type": "application/json"});
-                if (res.statusCode == 200) {
-                  await getMatch(props.widget.props);
-                } else {
-                  props.seterror("Error On Loading data");
-                }
-              } catch (e) {
-                props.seterror("Network Error");
-              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      PositioningPage(props.widget.props.match),
+                ),
+              );
+
+              // String _id = props.widget.props.match["_id"];
+              // try {
+              //   var body = {"status": "Started", "teams": authers};
+              //   var res = await http.put(getApi('booking?booking_id=' + _id),
+              //       body: jsonEncode(body),
+              //       headers: {"Content-Type": "application/json"});
+              //   if (res.statusCode == 200) {
+              //     await getMatch(props.widget.props);
+              //   } else {
+              //     props.seterror("Error On Loading data");
+              //   }
+              // } catch (e) {
+              //   props.seterror("Network Error");
+              // }
               props.setloading(false);
             },
             child: const Text('Confirm Start'),

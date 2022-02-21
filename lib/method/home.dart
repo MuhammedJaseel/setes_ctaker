@@ -4,35 +4,18 @@ import 'package:setes_ctaker/module/api.dart';
 
 getMatchs(props) async {
   String _id = props.widget.uData["_id"];
-
+  props.setState(() => props.error = null);
   try {
     var res = await http.get(getApi('matchs?ctaker_id=' + _id));
     if (res.statusCode == 200) {
-      props.setmatchs(await jsonDecode(res.body));
+      props.setState(() => props.matchs = jsonDecode(res.body));
     } else {
-      props.seterror("Error On Loading data");
+      props.setState(() => props.error = jsonDecode(res.body)['msg']);
+      return 0;
     }
   } catch (e) {
-    props.seterror("Network Error");
+    props.setState(() => props.error = "Network Error");
   }
-  props.setloading(false);
-
-  return 0;
-}
-
-rloadMatchs(props) async {
-  String _id = props.widget.uData["_id"];
-
-  try {
-    var res = await http.get(getApi('matchs?ctaker_id=' + _id));
-    if (res.statusCode == 200) {
-      props.setmatchs(await jsonDecode(res.body));
-    } else {
-      props.seterror("Error On Loading data");
-    }
-  } catch (e) {
-    props.seterror("Network Error");
-  }
-  props.setloading(false);
+  props.setState(() => props.loading = false);
   return 0;
 }
