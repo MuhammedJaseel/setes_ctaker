@@ -30,15 +30,18 @@ popupPlyers(props, item, title) {
                   onTap: () async {
                     Navigator.pop(context);
                     try {
-                      String body = jsonEncode({
+                      var body = jsonEncode({
                         "match_id": props.match["_id"],
                         "item": item,
                         "who": auts[i],
+                        "time": "10",
+                        "title": title
                       });
-                      var url = getApi('addevent');
-                      var res = await http.post(url, body: body);
+                      var url = getApi('matchevent');
+                      const head = {"Content-Type": "application/json"};
+                      var res = await http.post(url, body: body, headers: head);
                       if (res.statusCode == 200) {
-                        await getMatch(props.props);
+                        await getMatch(props);
                         const msg = 'Succesfully Updated';
                         popupErr(props.context, msg);
                       } else {

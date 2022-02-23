@@ -8,9 +8,8 @@ import 'package:setes_ctaker/widget/match_wigets.dart';
 import 'package:setes_ctaker/widget/pull_reload.dart';
 
 class MatchScreen extends StatefulWidget {
-  final dynamic _props;
   final Map props;
-  const MatchScreen(this._props, this.props, {Key? key}) : super(key: key);
+  const MatchScreen(this.props, {Key? key}) : super(key: key);
   @override
   _MatchScreenState createState() => _MatchScreenState();
 }

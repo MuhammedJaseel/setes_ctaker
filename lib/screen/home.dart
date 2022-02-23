@@ -5,7 +5,7 @@ import 'package:setes_ctaker/module/simple.dart';
 import 'package:setes_ctaker/screen/match.dart';
 import 'package:setes_ctaker/screen/warnings.dart';
 import 'package:setes_ctaker/widget/home_drower.dart';
-import 'package:setes_ctaker/widget/match_started.dart';
+import 'package:setes_ctaker/widget/home_match.dart';
 import 'package:setes_ctaker/widget/pull_reload.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -93,87 +93,7 @@ class HomeBody extends StatelessWidget {
                 ),
               ),
               for (var j = 0; j < props.matchs[i]["data"].length; j++)
-                InkWell(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MatchScreen(
-                        props,
-                        props.matchs[i]["data"][j],
-                      ),
-                    ),
-                  ),
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 3,
-                    ),
-                    width: scr.width,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 10),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(7)),
-                      gradient: LinearGradient(colors: [
-                        Color(0xffCE5859),
-                        Color(0xffEF8464),
-                      ]),
-                      boxShadow: [
-                        BoxShadow(
-                          offset: Offset(0, 3),
-                          blurRadius: 30,
-                          color: Colors.black12,
-                        )
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              props.matchs[i]["data"][j]["slot"]["truf_name"],
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              props.matchs[i]["data"][j]["slot"]["truf_id"],
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        StartedStatus(props.matchs[i]["data"][j]),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              props.matchs[i]["data"][j]["slot"]["ground"],
-                              style: const TextStyle(
-                                color: Colors.black38,
-                                fontSize: 12,
-                              ),
-                            ),
-                            Text(
-                              props.matchs[i]["data"][j]["slot"]["s_time"] +
-                                  "-" +
-                                  props.matchs[i]["data"][j]["slot"]["e_time"],
-                              style: const TextStyle(
-                                color: Colors.black38,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                HomeMatchEach(props.matchs[i]["data"][j]),
               if (props.matchs[i]["data"].length == 0)
                 const Padding(
                   padding: EdgeInsets.all(5),
