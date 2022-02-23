@@ -12,11 +12,19 @@ class PositioningEach extends StatelessWidget {
     double gw = scr.width - 20;
     double gh = gw * 1.5;
     var autT = props.authers;
-    var aut = [];
-    String sId = props.selected == null ? '' : props.selected['_id'];
+    var autR = [];
+    var autB = [];
+    String? sId;
+    if (props.selected != null) sId = props.selected['_id'];
 
     for (var i = 0; i < autT.length; i++) {
-      if (autT[i]['pos_xy'] == null) aut.add(autT[i]);
+      if (autT[i]['pos_xy'] == null) {
+        if (autT[i]['team'] == 'r') {
+          autR.add(autT[i]);
+        } else {
+          autB.add(autT[i]);
+        }
+      }
     }
 
     return Container(
@@ -24,19 +32,18 @@ class PositioningEach extends StatelessWidget {
       child: ListView(
         children: [
           const SizedBox(height: 20),
-          for (var i = 0; i < aut.length; i += 5)
+          for (var i = 0; i < autR.length; i += 5)
             Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    for (var j = 0; ((j < 5) && (i < aut.length)); j++)
-                      if (aut[i + j]['team'] == "r")
-                        InkWell(
-                          onTap: () =>
-                              props.setState(() => props.selected = aut[i + j]),
-                          child: PositioningEachPlayers(aut[i + j], sId),
-                        )
+                    for (var j = 0; ((j < 5) && (i + j < autR.length)); j++)
+                      InkWell(
+                        onTap: () =>
+                            props.setState(() => props.selected = autR[i + j]),
+                        child: PositioningEachPlayers(autR[i + j], sId),
+                      )
                   ],
                 ),
                 SizedBox(height: scr.width * .07)
@@ -71,47 +78,67 @@ class PositioningEach extends StatelessWidget {
                       ),
                     ),
                   ),
-                for (var i = 0; i < 11; i++)
-                  for (var j = 0; j < 21; j++)
+                for (var x = 0; x < 11; x++)
+                  for (var y = 0; y < 21; y++)
                     Positioned(
-                        top: gh / 21 * j,
-                        left: gw / 11 * i,
-                        height: gh / 21,
-                        width: gw / 11,
-                        child: InkWell(
-                          onTap: () {
-                            // if (sId != null) {
-                            //   for (var i = 0; i < autT.length; i++) {
-                            //     if (sId == autT['_id']) {
-                            //       props.setState(() {
-                            //         props.selected = null;
-                            //         props.authers[i]['pos_name'] = "Player";
-                            //         props.authers[i]
-                            //             ['pos_xy'] = {"x": .1, "y": .2};
-                            //       });
-                            //       break;
-                            //     }
-                            //   }
-                            // }
-                          },
-                        ))
+                      top: gh / 21 * y,
+                      left: gw / 11 * x,
+                      height: gh / 21,
+                      width: gw / 11,
+                      child: InkWell(
+                        onTap: () {
+                          if (sId != null) {
+                            for (var i = 0; i < autT.length; i++) {
+                              if (sId == autT[i]['_id']) {
+                                if (autT[i]['team'] == 'r' && y > 9) return;
+                                if (autT[i]['team'] == 'b' && y < 11) return;
+                                var aut = props.authers;
+                                aut[i]['pos_name'] = "Player";
+                                aut[i]['pos_xy'] = {
+                                  "x": (x / 11) + 0.05,
+                                  "y": (y / 21) + 0.025
+                                };
+                                props.setState(() {
+                                  props.selected = null;
+                                  props.authers = aut;
+                                });
+                                break;
+                              }
+                            }
+                          }
+                        },
+                      ),
+                    ),
+                for (var i = 0; i < autT.length; i++)
+                  if (autT[i]['pos_xy'] != null)
+                    Positioned(
+                      top: (autT[i]['pos_xy']['y'] * gh) - (scr.width * .07),
+                      left: (autT[i]['pos_xy']['x'] * gw) - (scr.width * .07),
+                      child: InkWell(
+                        onTap: () {
+                          if (autT[i]['pos_name'] != 'Keeper') {
+                            props.setState(() => props.selected = autT[i]);
+                          }
+                        },
+                        child: PositioningEachPlayers(autT[i], sId),
+                      ),
+                    ),
               ],
             ),
           ),
           const SizedBox(height: 10),
-          for (var i = 0; i < aut.length; i += 5)
+          for (var i = 0; i < autB.length; i += 5)
             Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    for (var j = 0; ((j < 5) && (i < aut.length)); j++)
-                      if (aut[i + j]['team'] == "b")
-                        InkWell(
-                          onTap: () =>
-                              props.setState(() => props.selected = aut[i + j]),
-                          child: PositioningEachPlayers(aut[i + j], sId),
-                        )
+                    for (var j = 0; ((j < 5) && (i + j < autB.length)); j++)
+                      InkWell(
+                        onTap: () =>
+                            props.setState(() => props.selected = autB[i + j]),
+                        child: PositioningEachPlayers(autB[i + j], sId),
+                      )
                   ],
                 ),
                 SizedBox(height: scr.width * .07)
@@ -125,7 +152,7 @@ class PositioningEach extends StatelessWidget {
 
 class PositioningEachPlayers extends StatelessWidget {
   final Map user;
-  final String selected;
+  final String? selected;
   const PositioningEachPlayers(this.user, this.selected, {Key? key})
       : super(key: key);
 
@@ -176,6 +203,8 @@ class PositioningEachPlayers extends StatelessWidget {
           ),
           Text(
             user['name'],
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(color: Colors.white, fontSize: scr.width * .03),
           ),
         ],

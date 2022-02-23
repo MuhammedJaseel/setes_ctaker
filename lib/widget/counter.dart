@@ -4,8 +4,7 @@ class CounterButton extends StatefulWidget {
   final Color color;
   final int i;
   final dynamic fun;
-  const CounterButton(
-      {Key? key, this.color = Colors.black, this.i = 0, this.fun})
+  const CounterButton(this.color, {Key? key, this.i = 0, this.fun})
       : super(key: key);
 
   @override

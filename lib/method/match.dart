@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:setes_ctaker/module/api.dart';
+import 'package:setes_ctaker/screen/home.dart';
 import 'package:setes_ctaker/screen/positioning.dart';
-
 import 'package:setes_ctaker/widget/match_event_adder.dart';
 
 getMatch(props) async {
@@ -99,6 +99,25 @@ cancelMatch(props) {
   );
 }
 
+startPositioning(props) {
+  props.seterror(null);
+  props.setloading(true);
+  var authers = props.widget.props.match["authers"];
+  for (var i = 0; i < authers.length; i++) {
+    if (!authers[i].containsKey("team")) {
+      props.seterror("Assign team to all members");
+      props.setloading(false);
+      return;
+    }
+  }
+  Navigator.push(
+    props.context,
+    MaterialPageRoute(
+      builder: (context) => PositioningPage(props.widget.props.match),
+    ),
+  );
+}
+
 startMatch(props) {
   showDialog<void>(
     context: props.context,
@@ -111,39 +130,39 @@ startMatch(props) {
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              props.seterror(null);
-              props.setloading(true);
-              var authers = props.widget.props.match["authers"];
-              for (var i = 0; i < authers.length; i++) {
-                if (!authers[i].containsKey("team")) {
-                  props.seterror("Assign team to all members");
-                  props.setloading(false);
+              String _id = props.widget.match["_id"];
+              var aut = props.widget.match['authers'];
+              for (var i = 0; i < aut.length; i++) {
+                if (aut[i]['pos_xy'] == null) {
+                  props.setState(() => props.error = "Position all members");
                   return;
                 }
               }
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      PositioningPage(props.widget.props.match),
-                ),
-              );
+              props.setState(() {
+                props.loading = false;
+                props.error = null;
+              });
+              try {
+                var body = {"status": "Started", "teams": aut};
+                var res = await http.put(getApi('booking?booking_id=' + _id),
+                    body: jsonEncode(body),
+                    headers: {"Content-Type": "application/json"});
+                if (res.statusCode == 200) {
+                  Navigator.pop(context);
 
-              // String _id = props.widget.props.match["_id"];
-              // try {
-              //   var body = {"status": "Started", "teams": authers};
-              //   var res = await http.put(getApi('booking?booking_id=' + _id),
-              //       body: jsonEncode(body),
-              //       headers: {"Content-Type": "application/json"});
-              //   if (res.statusCode == 200) {
-              //     await getMatch(props.widget.props);
-              //   } else {
-              //     props.seterror("Error On Loading data");
-              //   }
-              // } catch (e) {
-              //   props.seterror("Network Error");
-              // }
-              props.setloading(false);
+                  Navigator.push(
+                    props.context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeScreen(),
+                    ),
+                  );
+                } else {
+                  props.setState(() => props.error = "Error On Loading data");
+                }
+              } catch (e) {
+                props.setState(() => props.error = "Network Error");
+              }
+              props.setState(() => props.loading = false);
             },
             child: const Text('Confirm Start'),
           ),
@@ -199,3 +218,5 @@ addMatchEvent(props) async {
     },
   );
 }
+
+updateMatchEvent() {}

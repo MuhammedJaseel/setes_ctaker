@@ -102,7 +102,7 @@ class LoginScreen extends StatelessWidget {
 }
 
 class LoginLogin extends StatefulWidget {
-  final props;
+  final dynamic props;
   const LoginLogin(this.props, {Key? key}) : super(key: key);
 
   @override

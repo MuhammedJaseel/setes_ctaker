@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:setes_ctaker/method/match.dart';
 import 'package:setes_ctaker/module/api.dart';
@@ -7,98 +6,158 @@ import 'package:setes_ctaker/module/simple.dart';
 import 'package:setes_ctaker/widget/counter.dart';
 import 'package:http/http.dart' as http;
 
+popupErr(context, msg) => showDialog<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(title: Text(msg));
+    });
+
+popupPlyers(props, item, title) {
+  var auts = props.match["teams"];
+  return showDialog<void>(
+    context: props.context,
+    builder: (BuildContext context) {
+      Size scr = getScreen(context);
+      return AlertDialog(
+        title: Text("Chose Player ($title)"),
+        content: SizedBox(
+          height: scr.height * .7,
+          width: scr.width * .8,
+          child: ListView(
+            children: [
+              for (var i = 0; i < auts.length; i++)
+                InkWell(
+                  onTap: () async {
+                    Navigator.pop(context);
+                    try {
+                      String body = jsonEncode({
+                        "match_id": props.match["_id"],
+                        "item": item,
+                        "who": auts[i],
+                      });
+                      var url = getApi('addevent');
+                      var res = await http.post(url, body: body);
+                      if (res.statusCode == 200) {
+                        await getMatch(props.props);
+                        const msg = 'Succesfully Updated';
+                        popupErr(props.context, msg);
+                      } else {
+                        var msg = jsonDecode(res.body)['msg'];
+                        popupErr(props.context, msg);
+                      }
+                    } catch (e) {
+                      const msg = 'ERROR:Try again by reloading the page.';
+                      popupErr(props.context, msg);
+                    }
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(6),
+                            child: auts[i]["img"] == null
+                                ? const Icon(Icons.person,
+                                    size: 35, color: Colors.black54)
+                                : ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(17.5)),
+                                    child: Image.network(setUserPro(auts[i]),
+                                        height: 35,
+                                        width: 35,
+                                        fit: BoxFit.contain),
+                                  ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                auts[i]["name"],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black,
+                                    fontSize: 14.5),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                auts[i]["id"],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black38,
+                                    fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Text(
+                        auts[i]["team"] == "r" ? "Red" : "Blue",
+                        style: TextStyle(
+                          color:
+                              auts[i]["team"] == "r" ? Colors.red : Colors.blue,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 var ents = <Map>[
   {
-    "icon": Icons.sports_baseball,
-    "title": "Goals",
+    "icon": Icons.speed,
+    "title": "Total shots",
     "fun": (props) {
-      var match = props.props.match;
-      setgoalb(v) => match["goals"]["b"] = v;
-      setgoalr(v) => match["goals"]["r"] = v;
+      var shots = props.props.match["shots"];
+      setb(v) => shots["b"] = v;
+      setr(v) => shots["r"] = v;
       showDialog<void>(
         context: props.props.context,
         builder: (BuildContext context) {
           Size scr = getScreen(context);
           return AlertDialog(
-            title: const Text('Set Goal'),
+            title: const Text('Set shots'),
             content: Container(
-              padding: const EdgeInsets.all(10),
-              width: scr.width * .6,
-              height: 125,
-              child: Column(
-                children: [
-                  CounterButton(
-                    color: Colors.blue,
-                    i: match["goals"]["b"],
-                    fun: setgoalb,
-                  ),
+                padding: const EdgeInsets.all(10),
+                width: scr.width * .6,
+                height: 125,
+                child: Column(children: [
+                  CounterButton(Colors.blue, i: shots["b"], fun: setb),
                   const SizedBox(height: 5),
-                  CounterButton(
-                    color: Colors.red,
-                    i: match["goals"]["r"],
-                    fun: setgoalr,
-                  ),
-                ],
-              ),
-            ),
+                  CounterButton(Colors.red, i: shots["r"], fun: setr)
+                ])),
             actions: [
               TextButton(
                 onPressed: () async {
                   Navigator.pop(context);
-                  String _id = match["_id"];
+                  String _id = props.props.match["_id"];
                   try {
-                    var body = {"goals": match["goals"]};
-                    var res = await http.put(
-                        getApi('booking?booking_id=' + _id),
-                        body: jsonEncode(body),
-                        headers: {"Content-Type": "application/json"});
+                    var body = jsonEncode({"shots": shots});
+                    var url = getApi('booking?booking_id=' + _id);
+                    const head = {"Content-Type": "application/json"};
+                    var res = await http.put(url, body: body, headers: head);
                     if (res.statusCode == 200) {
                       await getMatch(props.props);
-                      showDialog<void>(
-                        context: props.props.context,
-                        builder: (BuildContext context) {
-                          return const AlertDialog(
-                              title: Text('Succesfully Updated'));
-                        },
-                      );
+                      const msg = 'Succesfully Updated';
+                      popupErr(props.props.context, msg);
                     } else {
-                      showDialog<void>(
-                        context: props.props.context,
-                        builder: (BuildContext context) {
-                          return const AlertDialog(
-                              title: Text(
-                                  'Something wrong on updating goal, try again by reloading the page.'));
-                        },
-                      );
+                      var msg = jsonDecode(res.body)['msg'];
+                      popupErr(props.props.context, msg);
                     }
                   } catch (e) {
-                    showDialog<void>(
-                      context: props.props.context,
-                      builder: (BuildContext context) {
-                        return const AlertDialog(
-                            title: Text(
-                                'Something wrong on updating goal, try again by reloading the page.'));
-                      },
-                    );
+                    const msg = 'ERROR:Try again by reloading the page.';
+                    popupErr(props.props.context, msg);
                   }
                 },
                 child: const Text('Update'),
-              ),
+              )
             ],
-          );
-        },
-      );
-    },
-  },
-  {
-    "icon": Icons.speed,
-    "title": "Total shots",
-    "fun": (props) {
-      showDialog<void>(
-        context: props.props.context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            title: Text('Chose event'),
           );
         },
       );
@@ -108,67 +167,50 @@ var ents = <Map>[
     "icon": Icons.power_settings_new,
     "title": "Average possession",
     "fun": (props) {
+      var poss = props.props.match["possessions"];
+      setb(v) => poss["b"] = v;
+      setr(v) => poss["r"] = v;
       showDialog<void>(
         context: props.props.context,
         builder: (BuildContext context) {
-          return const AlertDialog(
-            title: Text('Chose event'),
-          );
-        },
-      );
-    },
-  },
-  {
-    "icon": Icons.card_membership,
-    "title": "Fouls",
-    "fun": (props) {
-      showDialog<void>(
-        context: props.props.context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            title: Text('Chose event'),
-          );
-        },
-      );
-    },
-  },
-  {
-    "icon": Icons.sports_football,
-    "title": "Yellow cards",
-    "fun": (props) {
-      showDialog<void>(
-        context: props.props.context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            title: Text('Chose event'),
-          );
-        },
-      );
-    },
-  },
-  {
-    "icon": Icons.sports_football,
-    "title": "Red cards",
-    "fun": (props) {
-      showDialog<void>(
-        context: props.props.context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            title: Text('Chose event'),
-          );
-        },
-      );
-    },
-  },
-  {
-    "icon": Icons.outbond,
-    "title": "Off sides",
-    "fun": (props) {
-      showDialog<void>(
-        context: props.props.context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            title: Text('Chose event'),
+          Size scr = getScreen(context);
+          return AlertDialog(
+            title: const Text('Set possessions'),
+            content: Container(
+                padding: const EdgeInsets.all(10),
+                width: scr.width * .6,
+                height: 125,
+                child: Column(children: [
+                  CounterButton(Colors.blue, i: poss["b"], fun: setb),
+                  const SizedBox(height: 5),
+                  CounterButton(Colors.red, i: poss["r"], fun: setr)
+                ])),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  String _id = props.props.match["_id"];
+                  try {
+                    var body = jsonEncode({"possessions": poss});
+                    var url = getApi('booking?booking_id=' + _id);
+                    const head = {"Content-Type": "application/json"};
+                    var res = await http.put(url, body: body, headers: head);
+                    if (res.statusCode == 200) {
+                      await getMatch(props.props);
+                      const msg = 'Succesfully Updated';
+                      popupErr(props.props.context, msg);
+                    } else {
+                      var msg = jsonDecode(res.body)['msg'];
+                      popupErr(props.props.context, msg);
+                    }
+                  } catch (e) {
+                    const msg = 'ERROR:Try again by reloading the page.';
+                    popupErr(props.props.context, msg);
+                  }
+                },
+                child: const Text('Update'),
+              )
+            ],
           );
         },
       );
@@ -178,15 +220,79 @@ var ents = <Map>[
     "icon": Icons.flag,
     "title": "Corners",
     "fun": (props) {
+      var corns = props.props.match["corners"];
+      setb(v) => corns["b"] = v;
+      setr(v) => corns["r"] = v;
       showDialog<void>(
         context: props.props.context,
         builder: (BuildContext context) {
-          return const AlertDialog(
-            title: Text('Chose event'),
+          Size scr = getScreen(context);
+          return AlertDialog(
+            title: const Text('Set corners'),
+            content: Container(
+                padding: const EdgeInsets.all(10),
+                width: scr.width * .6,
+                height: 125,
+                child: Column(children: [
+                  CounterButton(Colors.blue, i: corns["b"], fun: setb),
+                  const SizedBox(height: 5),
+                  CounterButton(Colors.red, i: corns["r"], fun: setr)
+                ])),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  String _id = props.props.match["_id"];
+                  try {
+                    var body = jsonEncode({"corners": corns});
+                    var url = getApi('booking?booking_id=' + _id);
+                    const head = {"Content-Type": "application/json"};
+                    var res = await http.put(url, body: body, headers: head);
+                    if (res.statusCode == 200) {
+                      await getMatch(props.props);
+                      const msg = 'Succesfully Updated';
+                      popupErr(props.props.context, msg);
+                    } else {
+                      var msg = jsonDecode(res.body)['msg'];
+                      popupErr(props.props.context, msg);
+                    }
+                  } catch (e) {
+                    const msg = 'ERROR:Try again by reloading the page.';
+                    popupErr(props.props.context, msg);
+                  }
+                },
+                child: const Text('Update'),
+              )
+            ],
           );
         },
       );
     },
+  },
+  {
+    "icon": Icons.sports_baseball,
+    "title": "Goals",
+    "fun": (props) => popupPlyers(props.props, 'goals', "Goal"),
+  },
+  {
+    "icon": Icons.card_membership,
+    "title": "Fouls",
+    "fun": (props) => popupPlyers(props.props, 'fouls', "Foul"),
+  },
+  {
+    "icon": Icons.sports_football,
+    "title": "Yellow cards",
+    "fun": (props) => popupPlyers(props.props, 'ycs', "Yellow Card"),
+  },
+  {
+    "icon": Icons.sports_football,
+    "title": "Red cards",
+    "fun": (props) => popupPlyers(props.props, 'rcs', "Red Card"),
+  },
+  {
+    "icon": Icons.outbond,
+    "title": "Off sides",
+    "fun": (props) => popupPlyers(props.props, 'offsides', "OffSide"),
   },
 ];
 

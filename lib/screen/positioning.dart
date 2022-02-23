@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:setes_ctaker/method/match.dart';
 import 'package:setes_ctaker/module/simple.dart';
 import 'package:setes_ctaker/widget/match_wigets.dart';
 import 'package:setes_ctaker/widget/positioning_each.dart';
@@ -56,7 +57,7 @@ class _PositioningPageState extends State<PositioningPage> {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 2),
                 height: 55,
-                child: BottomButton("Confirm", () {
+                child: BottomButton(page == 0 ? "Confirm" : "Start", () {
                   if (page == 0) {
                     if (keeperB != null && keeperR != null) {
                       setState(() {
@@ -72,7 +73,7 @@ class _PositioningPageState extends State<PositioningPage> {
                       setState(() => error = "Choose both keepers");
                     }
                   } else {
-                    print(widget.match);
+                    startMatch(this);
                   }
                 }),
               ),

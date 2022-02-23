@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:setes_ctaker/module/api.dart';
+import 'package:setes_ctaker/module/gb_data.dart';
 import 'package:setes_ctaker/screen/home.dart';
 import 'package:setes_ctaker/screen/login.dart';
 import 'package:setes_ctaker/screen/warnings.dart';
@@ -33,7 +34,8 @@ class HomeConfig extends StatelessWidget {
         String _id = prefs.getString('userId') ?? "";
         var res = await http.get(getApi('profile?ctaker_id=' + _id));
         if (res.statusCode == 200) {
-          page = HomeScreen(await jsonDecode(res.body));
+          uData = await jsonDecode(res.body);
+          page = const HomeScreen();
         } else {
           page = const ErrorPage();
         }

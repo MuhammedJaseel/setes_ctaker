@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:setes_ctaker/method/home.dart';
+import 'package:setes_ctaker/module/gb_data.dart';
 import 'package:setes_ctaker/module/simple.dart';
 import 'package:setes_ctaker/screen/match.dart';
 import 'package:setes_ctaker/screen/warnings.dart';
@@ -8,12 +9,9 @@ import 'package:setes_ctaker/widget/match_started.dart';
 import 'package:setes_ctaker/widget/pull_reload.dart';
 
 class HomeScreen extends StatefulWidget {
-
-  final Map uData;
-  const HomeScreen(this.uData, {Key? key}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
   @override
   _HomeScreenState createState() => _HomeScreenState();
-
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -31,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     Size scr = getScreen(context);
     return Scaffold(
-      drawer: HomeDrower(widget.uData),
+      drawer: HomeDrower(uData),
       appBar: AppBar(title: const Text("Setes Caretaker")),
       body: loading
           ? const Loading()

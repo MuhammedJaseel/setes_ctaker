@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:setes_ctaker/method/match.dart';
+import 'package:setes_ctaker/module/api.dart';
 import 'package:setes_ctaker/module/simple.dart';
 import 'package:setes_ctaker/screen/warnings.dart';
 import 'package:setes_ctaker/widget/match_wigets.dart';
@@ -77,8 +78,7 @@ class _MatchScreenState extends State<MatchScreen> {
                         () {},
                       ),
                     ),
-                    if (match["status"] == "Cancelled" ||
-                        match["status"] == "Fulltime")
+                    if (match["status"] == "Cancelled")
                       Container(
                         alignment: Alignment.center,
                         height: 50,
@@ -253,7 +253,12 @@ class MatchPlyers extends StatelessWidget {
                         child: authers[i]["img"] == null
                             ? const Icon(Icons.person,
                                 size: 35, color: Colors.black54)
-                            : const ClipRRect(),
+                            : ClipRRect(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(17.5)),
+                                child: Image.network(setUserPro(authers[i]),
+                                    height: 35, width: 35, fit: BoxFit.contain),
+                              ),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -371,19 +376,18 @@ class _MatchBottomState extends State<MatchBottom> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (status == "Started")
+              if (status == "Started" || status == "Fulltime")
                 BottomButton(
                     loading ? "..." : "Add Event", () => addMatchEvent(this)),
               if (status == "Started")
                 BottomButton(
                     loading ? "..." : "Stop Match", () => stopMatch(this)),
-              if (status == "Booked")
-                BottomButton(loading ? "..." : "Start", () => startMatch(this)),
+              if (status == "Booked" || status == "Fulltime")
+                BottomButton(
+                    loading ? "..." : "LineUp", () => startPositioning(this)),
               if (status == "Booked")
                 BottomButton(
-                  loading ? "..." : "Cancel",
-                  () => cancelMatch(this),
-                ),
+                    loading ? "..." : "Cancel", () => cancelMatch(this)),
             ],
           ),
         ],
