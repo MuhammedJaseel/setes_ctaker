@@ -245,41 +245,158 @@ class MatchPlyers extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: authers[i]["img"] == null
-                            ? const Icon(Icons.person,
-                                size: 35, color: Colors.black54)
-                            : ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(17.5)),
-                                child: Image.network(setUserPro(authers[i]),
-                                    height: 35, width: 35, fit: BoxFit.contain),
+                  InkWell(
+                    onTap: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(authers[i]['name']),
+                            content: SizedBox(
+                              height: 120,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 100,
+                                        child: Text("ID"),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          authers[i]['id'] ?? '',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 100,
+                                        child: Text("Phone"),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          authers[i]['Phone'] ?? '',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 100,
+                                        child: Text("Position"),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          authers[i]['fav_position'] ?? '',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 100,
+                                        child: Text("Position II"),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          authers[i]['sec_fav_position'] ?? '',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 100,
+                                        child: Text("Prime"),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          (authers[i]['prime'] ?? false)
+                                              ? "YES"
+                                              : "NO",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            authers[i]["name"],
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black,
-                                fontSize: 14.5),
-                          ),
-                          const SizedBox(height: 3),
-                          Text(
-                            authers[i]["id"],
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black38,
-                                fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 43,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4, vertical: 8),
+                          child: authers[i]["img"] == null
+                              ? const Icon(Icons.person,
+                                  size: 35, color: Colors.black54)
+                              : ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(17.5),
+                                  ),
+                                  child: Image.network(
+                                    setUserPro(authers[i]),
+                                    height: 35,
+                                    width: 35,
+                                    fit: BoxFit.contain,
+                                    errorBuilder:
+                                        (context, exception, stackTrace) =>
+                                            Image.asset(
+                                      "asset/img_crack.jpg",
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              authers[i]["name"],
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black,
+                                  fontSize: 14.5),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              authers[i]["id"],
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black38,
+                                  fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   if (props.props.match["status"] == "Fulltime" ||
                       props.props.match["status"] == "Started")

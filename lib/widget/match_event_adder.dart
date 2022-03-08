@@ -45,7 +45,7 @@ popupPlyers(props, item, title) {
                         const msg = 'Succesfully Updated';
                         popupErr(props.context, msg);
                       } else {
-                        var msg = jsonDecode(res.body)['msg'];
+                        var msg = await jsonDecode(res.body)['msg'];
                         popupErr(props.context, msg);
                       }
                     } catch (e) {
