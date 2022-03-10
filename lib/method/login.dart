@@ -23,8 +23,16 @@ login(props) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("userId", data["_id"]);
       await prefs.setString("userName", data["user_name"]);
+      await prefs.setString("auth_key", data["key"] ?? '');
       await prefs.setBool("ifUser", true);
       uData = data;
+      gbHeader = {
+        'Content-Type': 'application/json',
+        'user_id': data["_id"],
+        "key": data["key"] ?? '',
+        "version": "1.0",
+        'gps': "${gbGPS.latitude},${gbGPS.longitude}",
+      };
       Navigator.pushReplacement(props.context,
           MaterialPageRoute(builder: (context) => const HomeScreen()));
     } else {
@@ -42,7 +50,9 @@ logout(context) async {
   await prefs.setString("userId", "");
   await prefs.setString("userName", "");
   await prefs.setBool("ifUser", false);
-  Navigator.pop(context);
-  Navigator.pushReplacement(
-      context, MaterialPageRoute(builder: (context) => LoginScreen()));
+  Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => LoginScreen(),
+      ),
+      (Route<dynamic> route) => false);
 }

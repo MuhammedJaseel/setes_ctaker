@@ -41,7 +41,7 @@ popupPlyers(props, item, title) {
                       const head = {"Content-Type": "application/json"};
                       var res = await http.post(url, body: body, headers: head);
                       if (res.statusCode == 200) {
-                        await getMatch(props);
+                        await getMatch(props, context);
                         const msg = 'Succesfully Updated';
                         popupErr(props.context, msg);
                       } else {
@@ -146,7 +146,7 @@ var ents = <Map>[
                     const head = {"Content-Type": "application/json"};
                     var res = await http.put(url, body: body, headers: head);
                     if (res.statusCode == 200) {
-                      await getMatch(props.props);
+                      await getMatch(props.props, context);
                       const msg = 'Succesfully Updated';
                       popupErr(props.props.context, msg);
                     } else {
@@ -199,7 +199,7 @@ var ents = <Map>[
                     const head = {"Content-Type": "application/json"};
                     var res = await http.put(url, body: body, headers: head);
                     if (res.statusCode == 200) {
-                      await getMatch(props.props);
+                      await getMatch(props.props, context);
                       const msg = 'Succesfully Updated';
                       popupErr(props.props.context, msg);
                     } else {
@@ -252,7 +252,7 @@ var ents = <Map>[
                     const head = {"Content-Type": "application/json"};
                     var res = await http.put(url, body: body, headers: head);
                     if (res.statusCode == 200) {
-                      await getMatch(props.props);
+                      await getMatch(props.props, context);
                       const msg = 'Succesfully Updated';
                       popupErr(props.props.context, msg);
                     } else {

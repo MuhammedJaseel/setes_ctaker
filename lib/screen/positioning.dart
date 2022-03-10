@@ -65,9 +65,9 @@ class _PositioningPageState extends State<PositioningPage> {
                         widget.match["authers"][keeperB]["pos_name"] = "Keeper";
                         widget.match["authers"][keeperR]["pos_name"] = "Keeper";
                         widget.match["authers"][keeperB]
-                            ["pos_xy"] = {"x": 0.5, "y": 0.08};
-                        widget.match["authers"][keeperR]
                             ["pos_xy"] = {"x": 0.5, "y": 0.92};
+                        widget.match["authers"][keeperR]
+                            ["pos_xy"] = {"x": 0.5, "y": 0.08};
                       });
                     } else {
                       setState(() => error = "Choose both keepers");

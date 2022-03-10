@@ -2,20 +2,29 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:setes_ctaker/method/login.dart';
 import 'package:setes_ctaker/module/api.dart';
+import 'package:setes_ctaker/module/gb_data.dart';
 import 'package:setes_ctaker/screen/home.dart';
 import 'package:setes_ctaker/screen/positioning.dart';
 import 'package:setes_ctaker/widget/match_event_adder.dart';
 
-getMatch(props) async {
+getMatch(props, context) async {
   props.seterror(null);
   String _id = props.widget.props["_id"];
   try {
-    var res = await http.get(getApi('match?booking_id=' + _id));
+    var res = await http.get(
+      getApi('match?booking_id=' + _id),
+      headers: gbHeader,
+    );
     if (res.statusCode == 200) {
       props.setmatch(await jsonDecode(res.body));
     } else {
-      props.seterror("Error On Loading data");
+      if (res.statusCode == 401) {
+        logout(context);
+      } else {
+        props.seterror("Error On Loading data");
+      }
     }
   } catch (e) {
     props.seterror("Network Error");
@@ -25,7 +34,7 @@ getMatch(props) async {
 }
 
 matchInitialLoad(props) async {
-  await getMatch(props);
+  await getMatch(props, props.context);
   props.setstatus(props.match["status"]);
 
   if (props.status == "Started") {
@@ -82,7 +91,7 @@ cancelMatch(props) {
                 var res = await http
                     .put(getApi('booking?booking_id=' + bookingId), body: body);
                 if (res.statusCode == 200) {
-                  await getMatch(props.widget.props);
+                  await getMatch(props.widget.props, context);
                 } else {
                   props.seterror("Error On Loading data");
                 }
@@ -144,12 +153,13 @@ startMatch(props) {
               });
               try {
                 var body = {"status": "Started", "teams": aut};
-                var res = await http.put(getApi('booking?booking_id=' + _id),
-                    body: jsonEncode(body),
-                    headers: {"Content-Type": "application/json"});
+                var res = await http.put(
+                  getApi('booking?booking_id=' + _id),
+                  body: jsonEncode(body),
+                  headers: gbHeader,
+                );
                 if (res.statusCode == 200) {
                   Navigator.pop(context);
-
                   Navigator.push(
                     props.context,
                     MaterialPageRoute(
@@ -157,7 +167,11 @@ startMatch(props) {
                     ),
                   );
                 } else {
-                  props.setState(() => props.error = "Error On Loading data");
+                  if (res.statusCode == 401) {
+                    logout(context);
+                  } else {
+                    props.setState(() => props.error = "Error On Loading data");
+                  }
                 }
               } catch (e) {
                 props.setState(() => props.error = "Network Error");
@@ -187,12 +201,19 @@ stopMatch(props) async {
               String _id = props.widget.props.match["_id"];
               try {
                 var body = {"status": "Fulltime"};
-                var res = await http.put(getApi('booking?booking_id=' + _id),
-                    body: body);
+                var res = await http.put(
+                  getApi('booking?booking_id=' + _id),
+                  body: body,
+                  headers: gbHeader,
+                );
                 if (res.statusCode == 200) {
-                  await getMatch(props.widget.props);
+                  await getMatch(props.widget.props, context);
                 } else {
-                  props.seterror("Error On Loading data");
+                  if (res.statusCode == 401) {
+                    logout(context);
+                  } else {
+                    props.seterror("Error On Loading data");
+                  }
                 }
               } catch (e) {
                 props.seterror("Network Error");

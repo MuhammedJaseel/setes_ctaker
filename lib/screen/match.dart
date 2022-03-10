@@ -73,7 +73,7 @@ class _MatchScreenState extends State<MatchScreen> {
                           ),
                           child: MatchBody(this),
                         ),
-                        () => getMatch(this),
+                        () => getMatch(this, context),
                         () {},
                       ),
                     ),

@@ -1,5 +1,5 @@
 
-const base = "https://18.116.136.111:8000/";
+const base = "https://setes.in:8000/";
 
 Uri getApi(s) => Uri.parse(base + 'ctaker/' + s);
 
