@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:setes_ctaker/method/home.dart';
+import 'package:setes_ctaker/module/api.dart';
 import 'package:setes_ctaker/module/gb_data.dart';
 import 'package:setes_ctaker/module/simple.dart';
-import 'package:setes_ctaker/screen/match.dart';
 import 'package:setes_ctaker/screen/warnings.dart';
 import 'package:setes_ctaker/widget/home_drower.dart';
 import 'package:setes_ctaker/widget/home_match.dart';
 import 'package:setes_ctaker/widget/pull_reload.dart';
+
+import 'package:web_socket_channel/io.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -19,9 +21,20 @@ class _HomeScreenState extends State<HomeScreen> {
   bool loading = true;
   String? error;
 
+  connectSocket() {
+    var channel = IOWebSocketChannel.connect(wsUrl(uData["_id"] ?? ''));
+    channel.stream.listen(
+      (message) => getMatchs(this),
+      onDone: () => Future.delayed(const Duration(seconds: 10), connectSocket),
+      onError: (e) =>
+          Future.delayed(const Duration(seconds: 10), connectSocket),
+    );
+  }
+
   @override
   void initState() {
     getMatchs(this);
+    connectSocket();
     super.initState();
   }
 

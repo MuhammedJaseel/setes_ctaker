@@ -1,5 +1,6 @@
-
 const base = "https://setes.in:8000/";
+
+Uri wsUrl(s) => Uri.parse('wss://setes.in:8000/ctakers/' + s);
 
 Uri getApi(s) => Uri.parse(base + 'ctaker/' + s);
 
