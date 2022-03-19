@@ -22,7 +22,7 @@ class _MatchScreenState extends State<MatchScreen> {
   String? error;
   seterror(v) => setState(() => error = v);
 
-  String status = "";
+  String? status = "";
   setstatus(v) => setState(() => status = v);
   String goals = ". - .";
   setgoals(v) => setState(() => goals = v);
@@ -365,7 +365,7 @@ class MatchPlyers extends StatelessWidget {
                                     setUserPro(authers[i]),
                                     height: 35,
                                     width: 35,
-                                    fit: BoxFit.contain,
+                                    fit: BoxFit.cover,
                                     errorBuilder:
                                         (context, exception, stackTrace) =>
                                             Image.asset(
@@ -389,9 +389,10 @@ class MatchPlyers extends StatelessWidget {
                             Text(
                               authers[i]["id"],
                               style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black38,
-                                  fontSize: 12),
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black38,
+                                fontSize: 12,
+                              ),
                             ),
                           ],
                         ),

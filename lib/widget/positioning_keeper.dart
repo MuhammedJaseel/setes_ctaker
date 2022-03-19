@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:setes_ctaker/module/api.dart';
 
 class PositioningKeeper extends StatelessWidget {
   final dynamic props;
@@ -64,7 +65,23 @@ class PositioningKeeper extends StatelessWidget {
                                   child: props.authers[i]["img"] == null
                                       ? const Icon(Icons.person,
                                           size: 35, color: Colors.black54)
-                                      : const ClipRRect(),
+                                      : ClipRRect(
+                                          borderRadius: const BorderRadius.all(
+                                            Radius.circular(17.5),
+                                          ),
+                                          child: Image.network(
+                                            setUserPro(props.authers[i]),
+                                            height: 35,
+                                            width: 35,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, exception,
+                                                    stackTrace) =>
+                                                Image.asset(
+                                              "asset/img_crack.jpg",
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                        ),
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

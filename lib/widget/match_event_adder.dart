@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:setes_ctaker/method/match.dart';
 import 'package:setes_ctaker/module/api.dart';
+import 'package:setes_ctaker/module/gb_data.dart';
 import 'package:setes_ctaker/module/simple.dart';
 import 'package:setes_ctaker/widget/counter.dart';
 import 'package:http/http.dart' as http;
@@ -30,16 +31,19 @@ popupPlyers(props, item, title) {
                   onTap: () async {
                     Navigator.pop(context);
                     try {
-                      var body = jsonEncode({
-                        "match_id": props.match["_id"],
-                        "item": item,
-                        "who": auts[i],
-                        "time": "10",
-                        "title": title
-                      });
+                      var body = jsonEncode(
+                        {
+                          "match_id": props.match["_id"],
+                          "status": props.match["status"],
+                          "item": item,
+                          "who": auts[i],
+                          "time": "10",
+                          "title": title
+                        },
+                      );
                       var url = getApi('matchevent');
-                      const head = {"Content-Type": "application/json"};
-                      var res = await http.post(url, body: body, headers: head);
+                      var res =
+                          await http.post(url, body: body, headers: gbHeader);
                       if (res.statusCode == 200) {
                         await getMatch(props, context);
                         const msg = 'Succesfully Updated';
@@ -141,10 +145,14 @@ var ents = <Map>[
                   Navigator.pop(context);
                   String _id = props.props.match["_id"];
                   try {
-                    var body = jsonEncode({"shots": shots});
+                    var body = jsonEncode({
+                      "status": "Update",
+                      "cur_status": props.props.match["status"],
+                      "shots": shots,
+                    });
                     var url = getApi('booking?booking_id=' + _id);
-                    const head = {"Content-Type": "application/json"};
-                    var res = await http.put(url, body: body, headers: head);
+                    var res =
+                        await http.put(url, body: body, headers: gbHeader);
                     if (res.statusCode == 200) {
                       await getMatch(props.props, context);
                       const msg = 'Succesfully Updated';
@@ -194,10 +202,14 @@ var ents = <Map>[
                   Navigator.pop(context);
                   String _id = props.props.match["_id"];
                   try {
-                    var body = jsonEncode({"possessions": poss});
+                    var body = jsonEncode({
+                      "status": "Update",
+                      "cur_status": props.props.match["status"],
+                      "possessions": poss
+                    });
                     var url = getApi('booking?booking_id=' + _id);
-                    const head = {"Content-Type": "application/json"};
-                    var res = await http.put(url, body: body, headers: head);
+                    var res =
+                        await http.put(url, body: body, headers: gbHeader);
                     if (res.statusCode == 200) {
                       await getMatch(props.props, context);
                       const msg = 'Succesfully Updated';
@@ -247,10 +259,14 @@ var ents = <Map>[
                   Navigator.pop(context);
                   String _id = props.props.match["_id"];
                   try {
-                    var body = jsonEncode({"corners": corns});
+                    var body = jsonEncode({
+                      "status": "Update",
+                      "cur_status": props.props.match["status"],
+                      "corners": corns
+                    });
                     var url = getApi('booking?booking_id=' + _id);
-                    const head = {"Content-Type": "application/json"};
-                    var res = await http.put(url, body: body, headers: head);
+                    var res =
+                        await http.put(url, body: body, headers: gbHeader);
                     if (res.statusCode == 200) {
                       await getMatch(props.props, context);
                       const msg = 'Succesfully Updated';

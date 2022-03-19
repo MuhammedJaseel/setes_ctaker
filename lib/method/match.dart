@@ -11,19 +11,17 @@ import 'package:setes_ctaker/widget/match_event_adder.dart';
 
 getMatch(props, context) async {
   props.seterror(null);
-  String _id = props.widget.props["_id"];
+  Map match = props.widget.props;
+  var url = 'match?booking_id=${match['_id']}&status=${match['status']}';
   try {
-    var res = await http.get(
-      getApi('match?booking_id=' + _id),
-      headers: gbHeader,
-    );
+    var res = await http.get(getApi(url), headers: gbHeader);
     if (res.statusCode == 200) {
       props.setmatch(await jsonDecode(res.body));
     } else {
       if (res.statusCode == 401) {
         logout(context);
       } else {
-        props.seterror("Error On Loading data");
+        props.seterror(jsonDecode(res.body)['msg']);
       }
     }
   } catch (e) {
@@ -110,12 +108,10 @@ cancelMatch(props) {
 
 startPositioning(props) {
   props.seterror(null);
-  props.setloading(true);
   var authers = props.widget.props.match["authers"];
   for (var i = 0; i < authers.length; i++) {
     if (!authers[i].containsKey("team")) {
       props.seterror("Assign team to all members");
-      props.setloading(false);
       return;
     }
   }
@@ -159,18 +155,19 @@ startMatch(props) {
                   headers: gbHeader,
                 );
                 if (res.statusCode == 200) {
-                  Navigator.pop(context);
+                  Navigator.pop(props.context);
                   Navigator.push(
                     props.context,
                     MaterialPageRoute(
-                      builder: (context) => HomeScreen(),
+                      builder: (context) => const HomeScreen(),
                     ),
                   );
                 } else {
                   if (res.statusCode == 401) {
                     logout(context);
                   } else {
-                    props.setState(() => props.error = "Error On Loading data");
+                    props.setState(
+                        () => props.error = jsonDecode(res.body)['msg']);
                   }
                 }
               } catch (e) {
@@ -203,7 +200,7 @@ stopMatch(props) async {
                 var body = {"status": "Fulltime"};
                 var res = await http.put(
                   getApi('booking?booking_id=' + _id),
-                  body: body,
+                  body: jsonEncode(body),
                   headers: gbHeader,
                 );
                 if (res.statusCode == 200) {
